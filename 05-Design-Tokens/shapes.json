@@ -1,0 +1,54 @@
+{
+  "$schema": "liquid-design-tokens/shapes",
+  "note": "来源：ui/theme/Design.kt（Radii / DialogSize）。新增组件只取档位值，不许现拍数字。",
+  "radii": {
+    "CARD": 20,
+    "SUB": 16,
+    "BUTTON": 12,
+    "INPUT": 10,
+    "PILL": 6,
+    "TICK": 4,
+    "circle": "CircleShape（不要写 rounded(50)）",
+    "usage": {
+      "CARD": "大卡片、弹窗外壳",
+      "SUB": "子卡片：统计卡、山册卡、列表容器",
+      "BUTTON": "所有按钮、胶囊按钮、分段控件",
+      "INPUT": "输入框、日期格、行内小按钮、代码块",
+      "PILL": "小标签、状态徽章、色条",
+      "TICK": "极小装饰色条，只用于细条，不用于可点区域"
+    }
+  },
+  "dialogSize": {
+    "SM": 0.80,
+    "MD": 0.88,
+    "LG": 0.92,
+    "MAX_HEIGHT": 0.80,
+    "usage": {
+      "SM": "确认类（一两句话）",
+      "MD": "一般弹窗（列表、详情）",
+      "LG": "表单与长正文"
+    }
+  },
+  "chrome": {
+    "topBarSolid": 50,
+    "topBarFeather": 22,
+    "topBarTotal": 68,
+    "bottomBarHeight": 60,
+    "bottomBarCorner": 26,
+    "pillScalePressed": 1.39,
+    "panelShiftMaxDp": 4,
+    "edgeWidth": 0.7,
+    "edgeWidthBar": 0.42
+  },
+  "stroke": {
+    "standard": 1,
+    "glassOutline": "Black × 0.055~0.09（浅）/ White × 0.16~0.22（深）",
+    "buttonOutline": "Color(0xFF0F172A) × 0.30（浅）/ White × 0.34（深）"
+  },
+  "rules": [
+    "圆形一律 CircleShape",
+    "字号没有半号（11.5 之类不用）",
+    "弹窗限高统一 0.80，底部永远留可点边距",
+    "例外要有注释理由（如分享卡 HERO 字号）"
+  ]
+}

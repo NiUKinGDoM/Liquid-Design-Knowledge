@@ -1,0 +1,77 @@
+{
+  "$schema": "liquid-design-tokens/colors",
+  "note": "来源：ui/theme/Theme.kt 与 ui/theme/Design.kt。文字颜色随主题变（@Composable getter），此表按浅/深列出解析后的实际值。",
+  "text": {
+    "ink": { "light": "#000000", "dark": "#FFFFFF", "desc": "主文字，纯黑/纯白" },
+    "inkSecondary": { "light": "rgba(0,0,0,0.62)", "dark": "rgba(255,255,255,0.70)", "desc": "次要文字" },
+    "inkMuted": { "light": "rgba(0,0,0,0.40)", "dark": "rgba(255,255,255,0.48)", "desc": "更弱文字" }
+  },
+  "accent": {
+    "indigo": "#4F46E5",
+    "accentIndigo": { "light": "#4F46E5", "dark": "#A5B4FC", "desc": "强调色，随主题变。新代码一律用这个，不要裸 Indigo" },
+    "onAccent": { "light": "#FFFFFF", "dark": "#1E1B4B", "desc": "强调色底上的文字色" }
+  },
+  "semantic": {
+    "danger": "#DC2626",
+    "dangerSoft": "#EF4444",
+    "dangerOnDark": "#F87171",
+    "success": "#16A34A",
+    "successDeep": "#15803D",
+    "successOnDark": "#6EE7A8",
+    "successLight": "#10B981",
+    "warn": "#F59E0B",
+    "warnDeep": "#D97706",
+    "info": "#0EA5E9",
+    "purple": "#7C3AED",
+    "purpleDeep": "#6D28D9",
+    "blue": "#3B82F6",
+    "teal": "#14B8A6",
+    "violet": "#A855F7",
+    "orange": "#F97316"
+  },
+  "neutral": {
+    "neutral": "#64748B",
+    "neutralSoft": "#94A3B8",
+    "neutralBorder": "#CBD5E1",
+    "borderLight": "#E2E8F0",
+    "borderSubtle": "#EDF0F7",
+    "borderSoft": "#EFF1F6"
+  },
+  "theme": {
+    "light": {
+      "background": "#F7F9FC",
+      "surface": "#FFFFFF",
+      "surfaceVariant": "#F1F5F9",
+      "onSurfaceVariant": "rgba(0,0,0,0.78)",
+      "outline": "#CBD5E1",
+      "primary": "#4F46E5"
+    },
+    "dark": {
+      "background": "#0F172A",
+      "surface": "#162032",
+      "surfaceVariant": "#1E293B",
+      "onSurfaceVariant": "rgba(255,255,255,0.84)",
+      "outline": "#334155",
+      "primary": "#A5B4FC"
+    }
+  },
+  "aurora": {
+    "light": [
+      { "color": "#60A5FA", "alpha": 0.30, "diameterVw": 95, "periodSec": 4.4 },
+      { "color": "#F472B6", "alpha": 0.26, "diameterVw": 100, "periodSec": 4.8 },
+      { "color": "#2DD4BF", "alpha": 0.22, "diameterVw": 80, "periodSec": 3.6 }
+    ],
+    "dark": [
+      { "color": "#6366F1", "alpha": 0.26, "diameterVw": 95, "periodSec": 4.4 },
+      { "color": "#BE185D", "alpha": 0.24, "diameterVw": 100, "periodSec": 4.8 },
+      { "color": "#0F766E", "alpha": 0.22, "diameterVw": 80, "periodSec": 3.6 }
+    ]
+  },
+  "rules": [
+    "文字只有黑白，层次靠透明度与字重，不用色相",
+    "彩色只给背景、色带、图标、进度，不给正文",
+    "强调色随主题变，深色底上白字用 OnAccent",
+    "紫只给分享卡与难度色，正向一律绿",
+    "语义色只用 Palette / DangerRed，不写裸 Color(0x...)"
+  ]
+}

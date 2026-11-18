@@ -1,0 +1,75 @@
+{
+  "$schema": "liquid-design-tokens/glass",
+  "note": "来源：ui/liquid/LiquidGlass.kt（liquidGlassSurface 默认值与硬编码数值）。改参数前读 07-Development-Rules/liquid-rules.md。",
+  "liquidGlassSurface": {
+    "refract": { "default": 10.0, "unit": "dp", "note": "8~12 常规；底栏细长条 22~26 + depth=true；>16 像鱼眼" },
+    "frost": { "default": 0.62, "range": [0, 1], "note": "唯一控制背后能否看穿的旋钮。正文压上 0.8+；底栏 0.55~0.65；装饰件 0.3" },
+    "veilAlpha": { "default": "auto", "autoFormula": "0.04 + frost * 0.22", "range": [0, 1], "note": "内容容器必须 >=0.5；不传按公式算得 0.04~0.30" },
+    "depth": { "default": false, "note": "体积弯折，细长底栏必须开" },
+    "tint": "#BFD4FF",
+    "tintAlpha": 0.10,
+    "showShadow": { "default": true, "note": "底栏/胶囊一律 false" },
+    "edgeWidth": { "default": 0.7, "unit": "dp", "note": "底栏胶囊 0.42；传 0 关掉" },
+    "topHighlight": true,
+    "pressedScale": 0.985
+  },
+  "effectChain": {
+    "lens": {
+      "refractionHeight": "depth ? max(refractPx, size.height * 0.5) : refractPx",
+      "refractionAmount": "height * (depth ? 1.1 : 1.5)",
+      "chromaticAberration": true
+    },
+    "blur": {
+      "radiusFormula": "min(1 + frost * 13, 10)",
+      "unit": "dp",
+      "note": "基数从 3 降到 1，上限 10 防 GPU 崩"
+    },
+    "highlight": { "width": 0.7, "intensity": 0.48, "angle": 45, "falloff": 0.95, "unit": "dp" },
+    "order": "先 lens 再 blur"
+  },
+  "flatButton": {
+    "whiteVeil": { "disabled": 0.06, "default": 0.10, "strong": 0.16, "pressed": 0.20 },
+    "outline": "1dp, Color(0xFF0F172A)×0.30 浅 / White×0.34 深",
+    "semantic": {
+      "danger": { "bgLight": "rgba(254,226,226,0.45)", "bgDark": "rgba(70,15,20,0.20)", "border": "rgba(220,38,38,0.9)" },
+      "solidDanger": { "bg": "rgba(239,68,68,0.85)", "border": "rgba(220,38,38,0.95)" },
+      "positive": { "bg": "rgba(22,163,74,0.16)", "border": "rgba(22,163,74,0.5)" }
+    }
+  },
+  "glassPanel": {
+    "background": { "light": "rgba(255,255,255,0.05)", "dark": "rgba(15,23,42,0.06)" },
+    "border": { "light": "rgba(255,255,255,0.11)", "dark": "rgba(255,255,255,0.04)", "width": 1 },
+    "radius": 20,
+    "shadow": "0 4px 24px rgba(0,0,0,0.02)"
+  },
+  "topBar": { "solidDp": 50, "featherDp": 22, "blurDp": 22, "veilPeak": 0.30, "veilPeakMin": 0.16 },
+  "bottomBar": {
+    "glassBar": {
+      "radius": 26,
+      "layers": ["本体 白0.13→0.06→0.10", "顶部漫反射 白0.34→0.14→透明 占上部45%", "镜面高光 白0.17 在17%~30%", "底部地面反光 白0.13 在76%~100%", "外沿1dp + 轮廓暗线 Black×0.055"],
+      "showShadow": false,
+      "depth": true
+    },
+    "pill": {
+      "pressedScale": 1.39,
+      "squashStretchMax": "±3.5%（体感），源码上限 0.09/0.12 + 两级平滑",
+      "panelShiftMaxDp": 4,
+      "dampingRatio": 1.0,
+      "clip": "clipPath（禁用 Modifier.clip）"
+    }
+  },
+  "degradation": {
+    "tiers": [
+      { "name": "真实折射+磨砂", "condition": "API>=33 且硬件渲染", "features": ["lens", "blur", "highlight"] },
+      { "name": "磨砂模糊", "condition": "API 31~32", "features": ["blur", "highlight"] },
+      { "name": "厚玻璃", "condition": "API<=30 / 软件渲染", "veilMin": 0.96 },
+      { "name": "已关闭", "condition": "用户关 / forceStatic", "features": ["tint", "highlight"] }
+    ],
+    "guards": {
+      "gpuEffectsUsable": "API>=31 且非软件渲染，否则早退",
+      "lensBroken": "AGSL 编译失败后永久跳过（@Volatile）",
+      "pathMinSize": "宽高 > 0.5px 才构造 Path"
+    }
+  },
+  "ironRule": "液态玻璃不许瞎改也不许删掉。改附加物，不削玻璃。"
+}

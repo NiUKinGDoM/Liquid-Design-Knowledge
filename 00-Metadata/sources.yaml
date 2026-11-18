@@ -1,0 +1,78 @@
+knowledge_base:
+  name: Liquid Design Knowledge
+  language: zh-CN
+  platform: Android
+  ui_toolkit: Jetpack Compose
+  visual_language: Liquid Glass
+  scope: personal-production-verified
+  source_app: 徒步小记 Android 原生版（vc143 / v1.1.1.10）
+  note: "个人整理知识库，从单一生产项目沉淀，不是 Google 官方规范，也不是通用设计标准。"
+
+sources:
+  - id: hiking_native_ui
+    name: 徒步小记原生版 UI 源码
+    url: "https://github.com/NiUKinGDoM/xixi-hiking-note/tree/master/app/src/main/java/com/xixi/hiking/nativeapp/ui"
+    type: primary_source_code
+    authority: primary
+    check_frequency: per_release
+    key_files:
+      - ui/theme/Design.kt          # 圆角/字号/语义色/弹窗尺寸档位
+      - ui/theme/Theme.kt           # 黑白文字体系/强调色/字体
+      - ui/liquid/LiquidGlass.kt    # 真液态玻璃实现（1401 行，铁律所在）
+      - ui/Glass.kt                 # glassPanel / 兼容层
+      - ui/GlassOverlay.kt          # 浮层玻璃
+      - ui/GlassWidgets.kt          # 自绘按钮/弹窗控件
+      - ui/GlassPickers.kt          # 选择器
+      - ui/AppChrome.kt             # 顶栏/底栏/胶囊形变
+      - ui/Aurora.kt                # 背景流光
+      - ui/SafeTap.kt               # 点击兜底
+      - ui/Toast.kt                 # 轻提示
+    note: "所有数值型结论的一手来源。注释里的 ★ 解释了'为什么是这个值'，优先于数值本身。"
+
+  - id: hiking_web_css
+    name: 徒步小记 Web 版 CSS
+    url: "https://xixi-hiking.pages.dev"
+    type: design_baseline
+    authority: primary
+    check_frequency: per_release
+    key_files:
+      - app.css            # .glass-panel / .glass-btn / .aurora-bg
+      - app-modal.css      # 弹窗与光斑
+    note: "原生版多处标注'1:1 搬 Web'，是设计意图的原始出处。数值冲突时以 Web 为基准核对。"
+
+  - id: kyant_backdrop
+    name: Kyant0/AndroidLiquidGlass (backdrop)
+    url: "https://github.com/Kyant0/AndroidLiquidGlass"
+    type: technical_dependency
+    authority: upstream_library
+    check_frequency: on_upgrade
+    note: "AGSL RuntimeShader 液态玻璃实现。drawBackdrop / lens / blur / 高光的 API 行为以此为准。库升级时重查 API 与实验性状态。"
+
+  - id: android_platform
+    name: Android Developers
+    url: "https://developer.android.com"
+    type: platform_reference
+    authority: primary
+    check_frequency: monthly
+    note: "RuntimeShader（API 33+）、HapticFeedback、WindowInsets 等平台能力。"
+
+  - id: material_design
+    name: Material Design 3
+    url: "https://m3.material.io"
+    type: reference_only
+    authority: reference
+    check_frequency: monthly
+    note: "仅作对照参考。本库是独立设计语言，不宣称符合 MD3；字体/无障碍等通用原则可借鉴。"
+
+secondary_sources:
+  note: "第三方液态玻璃教程、博客、设计文章仅用于定位思路与术语，不作为数值依据。"
+  - id: liquid_glass_articles
+    type: community_articles
+    authority: secondary
+    use: "理解'厚度感/色散/折射'等术语，不取具体 dp 值。"
+
+tracking:
+  checked_on: "2026-11-18"
+  rule: "只记录能从源码直接读到的数值和状态；用户决策标注'用户原话'；无法确认的标注'⚠️ 推断'。"
+  source_app_version: "vc143 / v1.1.1.10"
+  authority_order: "源码 > Web CSS > 用户原话 > 上游库文档 > 平台文档 > 第三方文章"

@@ -1,0 +1,44 @@
+{
+  "$schema": "liquid-design-tokens/typography",
+  "note": "来源：ui/theme/Design.kt（Type 档位）与 Theme.kt（AppTypography / AppTextScale）。只有 9 档，不要半号。",
+  "fontFamily": {
+    "name": "Noto Serif SC（内嵌，SIL OFL 1.1）",
+    "weights": { "Normal": "Regular", "Medium": "Regular", "SemiBold": "Bold", "Bold": "Bold" },
+    "letterSpacing": "0.02em",
+    "fallback": "系统缺字族时回退默认字体（退化但不乱码）",
+    "note": "FontFamily.Serif 中文仍是黑体（AOSP serif 只挂拉丁 NotoSerif），必须内嵌字体文件"
+  },
+  "scale": {
+    "HERO": { "sp": 22, "usage": "分享卡大标题，唯一例外，导出图专用" },
+    "TITLE": { "sp": 19, "usage": "页面主标题、庆祝标题" },
+    "H2": { "sp": 16, "usage": "弹窗标题、月份标题" },
+    "H3": { "sp": 15, "usage": "区块小标题" },
+    "BODY": { "sp": 14, "usage": "正文、按钮文字、列表主文本" },
+    "LABEL": { "sp": 13, "usage": "次要按钮、卡片标题、表单字段名" },
+    "CAPTION": { "sp": 12, "usage": "说明文字、副标题、单位" },
+    "TINY": { "sp": 11, "usage": "极小说明、图例、徽章" },
+    "MICRO": { "sp": 10, "usage": "角标、脚注（能用 TINY 就别用 MICRO）" }
+  },
+  "weights": {
+    "title": 700,
+    "semiTitle": 600,
+    "label": 500,
+    "body": 400
+  },
+  "typographyMapping": {
+    "headlineSmall": { "sp": 17, "weight": 700 },
+    "titleMedium": { "sp": 15, "weight": 700 },
+    "titleSmall": { "sp": 14, "weight": 600 },
+    "bodyLarge": { "sp": 14, "weight": 400 },
+    "bodyMedium": { "sp": 13, "weight": 400 },
+    "bodySmall": { "sp": 12, "weight": 400 },
+    "labelSmall": { "sp": 11.5, "weight": 500 }
+  },
+  "textScale": {
+    "systemFontScaleMin": 0.85,
+    "systemFontScaleMax": 1.0,
+    "note": "系统 fontScale 封顶 1.0，防止放大字体撑破固定高度容器；设计稿标注值即屏幕实际值"
+  },
+  "monospaceExceptions": ["帧率胶囊", "版本号", "堆栈", "代码块"],
+  "rules": ["只有 9 档字号", "不用 11.5/12.5 半号", "别处不写 fontFamily", "全站套 0.02em 字距"]
+}

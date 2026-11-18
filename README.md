@@ -6,6 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Pages](https://img.shields.io/badge/在线预览-GitHub%20Pages-4F46E5)](https://niukingdom.github.io/Liquid-Design-Knowledge/)
+[![Showcase](https://img.shields.io/badge/示例App-设计语言活体演示-0EA5E9)](https://niukingdom.github.io/Liquid-Design-Knowledge/showcase/)
 
 </div>
 
@@ -78,6 +79,22 @@
 | `glassPanel` | 白 `0.05` 底 + 白 `0.11` 边 + 20dp 圆角 | 卡片、分组容器 |
 
 选择口诀：**会动的自己画，静止的才折射，一堆小的走平面。**
+
+## 示例 App · 设计语言活体演示
+
+参照 Android-MD3-Knowledge 的 `09-Sample-Apps` 思路，本库配了一个**单文件 HTML 示例 App**：把上面每条规范做成可点、可拖、可切主题的真实组件，一眼看出这套长什么样。
+
+**[在线打开示例 App](https://niukingdom.github.io/Liquid-Design-Knowledge/showcase/)** · 源文件：[`docs/showcase/index.html`](docs/showcase/index.html)
+
+| 演示区 | 对应规范 |
+|---|---|
+| 色彩 | 文字只有黑白 + 语义色板 |
+| 圆角 6 档 / 字号 9 档 | 尺寸只取档位，不许现拍数字 |
+| 按钮 | 平面配方 + 语义三态 + 按压反馈（含震动） |
+| 玻璃卡 | 真模糊采样身后流动光斑，薄雾不白板 |
+| 底栏胶囊 | 点按切换 + 按住拖动 + squash & stretch（可亲手体验形变回弹） |
+| 弹窗 / Toast | 弹窗平面化、Toast 盖在弹窗之上 |
+| 主题切换 | 浅 / 深两套配色，验证强调色随主题变 |
 
 > **最高铁律：液态玻璃不许瞎改，也不许删掉。** 这条是拿四轮返工换来的。修 bug 的正确顺序永远是：保住玻璃本身 → 查附加物 → 只改那个出问题的附加物。任何"把折射删了换稳定"的方案都是错的。
 

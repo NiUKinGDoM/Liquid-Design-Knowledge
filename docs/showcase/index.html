@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Liquid Showcase — 设计语言活体示例</title>
+<meta name="description" content="Liquid Design Knowledge 的配套示例 App：把光斑、玻璃、档位、形变、弹窗做成可交互的活体演示。">
+<style>
+  :root{
+    --bg:#F7F9FC; --surface:#FFFFFF; --ink:#000; --ink2:rgba(0,0,0,.62); --ink3:rgba(0,0,0,.40);
+    --accent:#4F46E5; --accent-dark:#A5B4FC; --onaccent:#fff;
+    --danger:#DC2626; --success:#16A34A; --warn:#F59E0B;
+    --border:#E2E8F0; --glass-bg:rgba(255,255,255,.55); --glass-line:rgba(255,255,255,.85);
+    --r-card:20px; --r-sub:16px; --r-btn:12px; --r-input:10px; --r-pill:6px;
+    --serif:'Noto Serif SC','Songti SC','SimSun',serif; --mono:ui-monospace,'Cascadia Code',monospace;
+  }
+  html[data-theme="dark"]{
+    --bg:#0F172A; --surface:#162032; --ink:#fff; --ink2:rgba(255,255,255,.70); --ink3:rgba(255,255,255,.48);
+    --accent:#A5B4FC; --accent-dark:#4F46E5; --onaccent:#1E1B4B;
+    --border:#334155; --glass-bg:rgba(22,32,50,.55); --glass-line:rgba(255,255,255,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--serif);color:var(--ink);background:var(--bg);letter-spacing:.02em;line-height:1.7;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+
+  /* ① Aurora 三光斑——周期互质，只动合成层 */
+  .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .spot{position:absolute;border-radius:50%;will-change:transform}
+  .s1{width:95vw;height:95vw;left:-22vw;top:-10vw;background:radial-gradient(circle,rgba(96,165,250,.30) 0%,rgba(96,165,250,0) 68%);animation:d1 4.4s ease-in-out infinite alternate}
+  .s2{width:100vw;height:100vw;right:-18vw;bottom:-30vw;background:radial-gradient(circle,rgba(244,114,182,.26) 0%,rgba(244,114,182,0) 68%);animation:d2 4.8s ease-in-out infinite alternate}
+  .s3{width:80vw;height:80vw;left:16vw;top:-6vw;background:radial-gradient(circle,rgba(45,212,191,.22) 0%,rgba(45,212,191,0) 68%);animation:d3 3.6s ease-in-out infinite alternate}
+  html[data-theme="dark"] .s1{background:radial-gradient(circle,rgba(99,102,241,.26) 0%,transparent 68%)}
+  html[data-theme="dark"] .s2{background:radial-gradient(circle,rgba(190,24,93,.24) 0%,transparent 68%)}
+  html[data-theme="dark"] .s3{background:radial-gradient(circle,rgba(15,118,110,.22) 0%,transparent 68%)}
+  @keyframes d1{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(4vw,-3vw,0) scale(1.25)}100%{transform:translate3d(-3vw,4vw,0) scale(1.08)}}
+  @keyframes d2{0%{transform:translate3d(0,0,0) scale(1.12)}50%{transform:translate3d(-5vw,3vw,0) scale(.88)}100%{transform:translate3d(3vw,-4vw,0) scale(1.28)}}
+  @keyframes d3{0%{transform:translate3d(0,0,0) scale(.95)}50%{transform:translate3d(4vw,3vw,0) scale(1.22)}100%{transform:translate3d(-4vw,-2vw,0) scale(1.05)}}
+
+  /* 玻璃体系 */
+  .glass{background:var(--glass-bg);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);border:1px solid var(--glass-line);border-radius:var(--r-card);box-shadow:0 4px 24px rgba(0,0,0,.05),inset 0 1px 0 rgba(255,255,255,.55)}
+  html[data-theme="dark"] .glass{box-shadow:0 4px 24px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.10)}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+
+  /* 顶栏 */
+  header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(0,0,0,.05)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:56px}
+  .brand{font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
+  .brand svg{width:24px;height:24px}
+  .theme-btn{border:1px solid var(--border);background:var(--glass-bg);color:var(--ink);border-radius:var(--r-btn);padding:7px 13px;font-family:var(--serif);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+  .theme-btn svg{width:15px;height:15px}
+
+  .hero{text-align:center;padding:52px 0 30px}
+  .hero h1{font-size:clamp(30px,6vw,44px);font-weight:700;letter-spacing:-.01em}
+  .hero p{font-size:13px;color:var(--ink2);margin-top:10px}
+  .live{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink2);margin-top:16px;padding:5px 12px;border-radius:999px;background:var(--glass-bg);border:1px solid var(--glass-line)}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--success);display:block;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* 演示卡 */
+  .demo{padding:22px;margin-bottom:14px}
+  .demo h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:9px;margin-bottom:4px}
+  .demo h2 .no{font-family:var(--mono);font-size:11px;color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);padding:2px 8px;border-radius:var(--r-pill)}
+  .demo .hint{font-size:12px;color:var(--ink3);margin-bottom:18px;line-height:1.65}
+  .stage{background:color-mix(in srgb,var(--surface) 50%,transparent);border:1px solid var(--border);border-radius:var(--r-sub);padding:20px;min-height:80px}
+
+  /* 色彩演示 */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
+  .sw{border-radius:var(--r-input);overflow:hidden;border:1px solid var(--border)}
+  .sw .chip{height:52px}
+  .sw .lbl{font-size:10px;padding:6px 8px;background:var(--surface);color:var(--ink2);font-family:var(--mono)}
+  .ink-row{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+  .ink-row div{padding:10px 14px;border-radius:var(--r-input);border:1px solid var(--border);font-size:13px}
+
+  /* 圆角档位 */
+  .radii{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .rd{text-align:center;font-size:11px;color:var(--ink2)}
+  .rd .box{height:52px;background:var(--accent);opacity:.85;margin-bottom:7px;display:grid;place-items:center;color:#fff;font-family:var(--mono);font-size:13px;font-weight:600}
+  .rd:nth-child(1) .box{border-radius:20px}.rd:nth-child(2) .box{border-radius:16px}.rd:nth-child(3) .box{border-radius:12px}
+  .rd:nth-child(4) .box{border-radius:10px}.rd:nth-child(5) .box{border-radius:6px}.rd:nth-child(6) .box{border-radius:50%;width:52px;margin:0 auto 7px}
+
+  /* 字号档位 */
+  .types{display:flex;flex-direction:column;gap:7px}
+  .tp{display:flex;align-items:baseline;gap:14px;padding:7px 0;border-bottom:1px dashed var(--border)}
+  .tp:last-child{border:none}
+  .tp .tag{font-family:var(--mono);font-size:10px;color:var(--accent);width:52px;flex-shrink:0}
+  .tp .txt{line-height:1.4}
+
+  /* 按钮 */
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .btn{padding:10px 18px;border-radius:var(--r-btn);font-size:14px;font-family:var(--serif);font-weight:600;cursor:pointer;border:1px solid rgba(0,0,0,.30);background:rgba(255,255,255,.10);color:var(--ink);transition:transform .12s,background .12s;user-select:none}
+  html[data-theme="dark"] .btn{border-color:rgba(255,255,255,.34)}
+  .btn:active{transform:scale(.97);background:rgba(255,255,255,.20)}
+  .btn.strong{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent)}
+  .btn.danger{background:rgba(254,226,226,.45);border-color:rgba(220,38,38,.9);color:var(--danger)}
+  html[data-theme="dark"] .btn.danger{background:rgba(70,15,20,.20)}
+  .btn.solid-danger{background:rgba(239,68,68,.85);border-color:rgba(220,38,38,.95);color:#fff}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  /* 胶囊底栏——squash & stretch */
+  .tabbar{position:relative;display:flex;height:58px;border-radius:26px;background:var(--glass-bg);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid var(--glass-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.55);overflow:hidden;touch-action:none}
+  .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/4);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.24));border:1px solid rgba(255,255,255,.9);transition:left .35s cubic-bezier(.2,.9,.25,1);z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  html[data-theme="dark"] .pill{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.05));border-color:rgba(255,255,255,.28)}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;z-index:2;cursor:pointer;font-size:10px;color:var(--ink2);user-select:none}
+  .tab svg{width:20px;height:20px;fill:currentColor;transition:transform .2s}
+  .tab.on{color:var(--accent);font-weight:600}
+  .tab.on svg{transform:translateY(-1px) scale(1.08)}
+  .squash-note{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:10px;text-align:center}
+
+  /* 弹窗 */
+  .modal-mask{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.28);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-mask.open{display:flex}
+  .modal{width:min(100%,420px);background:var(--glass-bg);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);border:1px solid var(--glass-line);border-radius:var(--r-card);padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  .modal h3{font-size:16px;font-weight:700;margin-bottom:8px}
+  .modal p{font-size:13px;color:var(--ink2);margin-bottom:20px}
+  .modal .acts{display:flex;gap:10px;justify-content:flex-end}
+
+  /* Toast */
+  .toast{position:fixed;left:50%;bottom:88px;transform:translate(-50%,20px);z-index:200;background:#1F2937;color:#fff;padding:11px 20px;border-radius:var(--r-btn);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  footer{text-align:center;padding:30px 0 50px;font-size:11px;color:var(--ink3)}
+  footer a{color:var(--accent);text-decoration:none}
+  @media(max-width:560px){.radii{grid-template-columns:repeat(2,1fr)}.demo{padding:18px}.stage{padding:14px}}
+  @media(prefers-reduced-motion:reduce){.spot,.live i{animation:none}*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><div class="spot s1"></div><div class="spot s2"></div><div class="spot s3"></div></div>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" fill="none"><rect x="3" y="3" width="26" height="26" rx="9" stroke="var(--accent)" stroke-width="1.6"/><path d="M8 19c3-6 7 3 10-3s5 2 6-1" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="22" cy="10" r="1.6" fill="var(--accent)"/></svg>
+      Liquid Showcase
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="切换深浅主题">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span id="themeLabel">深色</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>设计语言 · 活体示例</h1>
+    <p>每个区块演示一条规范。全部按档位取值，没有一个是现拍的数字。</p>
+    <div class="live"><i></i>LIVE · 光斑正在以 4.4 / 4.8 / 3.6s 互质周期流动</div>
+  </div>
+
+  <!-- 色彩 -->
+  <section class="demo glass">
+    <h2><span class="no">01</span>文字只有黑白，装饰才有颜色</h2>
+    <p class="hint">主文字纯黑/纯白，层次靠透明度与字重；彩色只给背景、色带、图标、进度。</p>
+    <div class="stage">
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:#4F46E5"></div><div class="lbl">Indigo</div></div>
+        <div class="sw"><div class="chip" style="background:#DC2626"></div><div class="lbl">Danger</div></div>
+        <div class="sw"><div class="chip" style="background:#16A34A"></div><div class="lbl">Success</div></div>
+        <div class="sw"><div class="chip" style="background:#F59E0B"></div><div class="lbl">Warn</div></div>
+        <div class="sw"><div class="chip" style="background:#0EA5E9"></div><div class="lbl">Info</div></div>
+      </div>
+      <div class="ink-row">
+        <div style="color:var(--ink)">主文字 Ink · 100% 纯黑/纯白</div>
+        <div style="color:var(--ink2)">次要 InkSecondary · 62% 透明度</div>
+        <div style="color:var(--ink3)">更弱 InkMuted · 40% 透明度</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 圆角 -->
+  <section class="demo glass">
+    <h2><span class="no">02</span>圆角只有 6 档</h2>
+    <p class="hint">新增组件只从这里取值，圆形一律 CircleShape，不写 rounded(50)。</p>
+    <div class="stage">
+      <div class="radii">
+        <div class="rd"><div class="box">20</div>CARD 卡片</div>
+        <div class="rd"><div class="box">16</div>SUB 子卡</div>
+        <div class="rd"><div class="box">12</div>BUTTON 按钮</div>
+        <div class="rd"><div class="box">10</div>INPUT 输入</div>
+        <div class="rd"><div class="box">6</div>PILL 徽章</div>
+        <div class="rd"><div class="box"></div>CIRCLE 圆形</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 字号 -->
+  <section class="demo glass">
+    <h2><span class="no">03</span>字号只有 9 档，没有半号</h2>
+    <p class="hint">宋体衬线 + 0.02em 字距；系统字体放大封顶 1.0，防止撑破容器。</p>
+    <div class="stage">
+      <div class="types">
+        <div class="tp"><span class="tag">22 HERO</span><span class="txt" style="font-size:22px;font-weight:700">分享卡大标题</span></div>
+        <div class="tp"><span class="tag">19 TITLE</span><span class="txt" style="font-size:19px;font-weight:700">页面主标题</span></div>
+        <div class="tp"><span class="tag">16 H2</span><span class="txt" style="font-size:16px;font-weight:600">弹窗标题</span></div>
+        <div class="tp"><span class="tag">15 H3</span><span class="txt" style="font-size:15px">区块小标题</span></div>
+        <div class="tp"><span class="tag">14 BODY</span><span class="txt" style="font-size:14px">正文与按钮文字</span></div>
+        <div class="tp"><span class="tag">12 CAPTION</span><span class="txt" style="font-size:12px;color:var(--ink2)">说明 / 副标题 / 单位</span></div>
+        <div class="tp"><span class="tag">10 MICRO</span><span class="txt" style="font-size:10px;color:var(--ink3)">脚注与角标</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 按钮 -->
+  <section class="demo glass">
+    <h2><span class="no">04</span>按钮全平面：薄面 + 细边</h2>
+    <p class="hint">点一下看按压反馈（缩到 0.97）。危险/正向各有固定配方，紫色不参与正向。</p>
+    <div class="stage">
+      <div class="btn-row">
+        <button class="btn">默认</button>
+        <button class="btn strong">主操作</button>
+        <button class="btn danger">危险</button>
+        <button class="btn solid-danger">实心危险</button>
+        <button class="btn" disabled>禁用</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 玻璃 -->
+  <section class="demo glass">
+    <h2><span class="no">05</span>玻璃是地基：薄雾，不是白板</h2>
+    <p class="hint">折射 + 边缘光 + 薄白膜。下方这张卡真的在采样并虚化身后流动的光斑。</p>
+    <div class="stage" style="position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:linear-gradient(120deg,rgba(96,165,250,.35),rgba(244,114,182,.28) 50%,rgba(45,212,191,.25));filter:blur(6px);border-radius:16px"></div>
+      <div style="position:relative;margin:14px;padding:22px;border-radius:20px;background:rgba(255,255,255,.42);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,.85);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 18px rgba(0,0,0,.08)">
+        <div style="font-size:15px;font-weight:700">liquidGlassSurface</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:6px">refract 10 · frost 0.62 · 边缘高光 0.7dp · 色散开</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底栏胶囊 -->
+  <section class="demo glass">
+    <h2><span class="no">06</span>底栏胶囊：按住就能拖</h2>
+    <p class="hint">点按切换，或按住左右拖动——胶囊跟随并有 squash &amp; stretch 形变回弹。</p>
+    <div class="stage">
+      <div class="tabbar" id="tabbar">
+        <div class="pill" id="pill"></div>
+        <div class="tab on" data-i="0"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4v9zm0 7h6v-6H4v6zm10 0h6v-9h-6v9zm0-16v6h6V4h-6z"/></svg>概览</div>
+        <div class="tab" data-i="1"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 3v10h12V7H6zm2 2h8v2H8V9zm0 4h6v2H8v-2z"/></svg>记录</div>
+        <div class="tab" data-i="2"><svg viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 8v10H5V10h14z"/></svg>计划</div>
+        <div class="tab" data-i="3"><svg viewBox="0 0 24 24"><path d="M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 10c4 0 7 2 7 4v2H5v-2c0-2 3-4 7-4z"/></svg>我的</div>
+      </div>
+      <div class="squash-note" id="squashNote">当前：概览 · 形变上限 ±3.5% · 回弹 dampingRatio 1.0</div>
+    </div>
+  </section>
+
+  <!-- 弹窗 -->
+  <section class="demo glass">
+    <h2><span class="no">07</span>弹窗与 Toast</h2>
+    <p class="hint">弹窗平面化、统一关闭按钮；Toast 用 Popup，保证盖在弹窗之上。</p>
+    <div class="stage" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn strong" id="openModal">打开弹窗</button>
+      <button class="btn" id="openToast">弹个 Toast</button>
+    </div>
+  </section>
+
+  <footer>
+    Liquid Design Knowledge · 配套示例 App · <a href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge" target="_blank" rel="noopener">查看知识库</a>
+  </footer>
+</main>
+
+<div class="modal-mask" id="mask">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle">删除这条记录？</h3>
+    <p>弹窗平面化：只有一层填充和一条极细边，没有虚假的立体光影。底部是统一收口的关闭按钮。</p>
+    <div class="acts">
+      <button class="btn" id="closeModal">关闭</button>
+      <button class="btn danger" id="confirmDanger">删除</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">操作出错了：示例异常已拦截，不会闪退</div>
+
+<script>
+(function(){
+  // 主题切换（验证深浅两套配色）
+  var root=document.documentElement, label=document.getElementById('themeLabel');
+  document.getElementById('themeBtn').onclick=function(){
+    var dark=root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme',dark?'light':'dark');
+    label.textContent=dark?'深色':'浅色';
+  };
+
+  // Toast
+  var toast=document.getElementById('toast'), tt;
+  function showToast(){toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show')},2200);}
+  document.getElementById('openToast').onclick=showToast;
+
+  // 弹窗
+  var mask=document.getElementById('mask');
+  document.getElementById('openModal').onclick=function(){mask.classList.add('open')};
+  document.getElementById('closeModal').onclick=function(){mask.classList.remove('open')};
+  document.getElementById('confirmDanger').onclick=function(){mask.classList.remove('open');showToast()};
+  mask.onclick=function(e){if(e.target===mask)mask.classList.remove('open')};
+
+  // 胶囊底栏：点按切换 + 按住拖动 + squash & stretch
+  var bar=document.getElementById('tabbar'), pill=document.getElementById('pill'),
+      tabs=[].slice.call(bar.querySelectorAll('.tab')), note=document.getElementById('squashNote'),
+      cur=0, dragging=false, startX=0, moved=false;
+  function movePill(i,squash){
+    var n=tabs.length, w=100/n;
+    var base=4+(i*(bar.clientWidth-8)/n);
+    var pw=(bar.clientWidth-8)/n;
+    pill.style.left=base+'px';
+    pill.style.width=pw+'px';
+    if(squash){pill.style.transform='scaleX('+(1+squash)+') scaleY('+(1-squash)+')';}
+    else{pill.style.transform='';}
+    tabs.forEach(function(t,k){t.classList.toggle('on',k===i)});
+    note.textContent='当前：'+tabs[i].textContent.trim()+' · 形变上限 ±3.5% · 回弹 dampingRatio 1.0';
+  }
+  function setTab(i){cur=(i+tabs.length)%tabs.length;movePill(cur,0)}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){if(!moved)setTab(i);moved=false})});
+  bar.addEventListener('pointerdown',function(e){dragging=true;moved=false;startX=e.clientX;bar.setPointerCapture(e.pointerId)});
+  bar.addEventListener('pointermove',function(e){
+    if(!dragging)return;
+    var dx=e.clientX-startX;
+    if(Math.abs(dx)>8)moved=true;
+    var cell=(bar.clientWidth-8)/tabs.length;
+    var squash=Math.max(-0.12,Math.min(0.12,dx/bar.clientWidth*1.6));
+    movePill(cur,squash);
+  });
+  function endDrag(e){
+    if(!dragging)return;dragging=false;
+    var dx=e.clientX-startX, cell=(bar.clientWidth-8)/tabs.length;
+    if(Math.abs(dx)>cell*0.5)setTab(cur+(dx>0?1:-1));
+    else movePill(cur,0);
+    setTimeout(function(){moved=false},50);
+  }
+  bar.addEventListener('pointerup',endDrag);
+  bar.addEventListener('pointercancel',function(){dragging=false;movePill(cur,0)});
+  window.addEventListener('resize',function(){movePill(cur,0)});
+  movePill(0,0);
+
+  // 按钮点击反馈（震动：支持则调用）
+  [].slice.call(document.querySelectorAll('.btn')).forEach(function(b){
+    b.addEventListener('click',function(){if(navigator.vibrate)navigator.vibrate(12)});
+  });
+})();
+</script>
+</body>
+</html>

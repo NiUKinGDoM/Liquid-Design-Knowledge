@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liquid Design Knowledge — 面向 AI 的液态玻璃设计语言知识库</title>
+<meta name="description" content="从徒步小记原生版 143 版迭代沉淀的 Liquid Glass 设计语言知识库。面向 AI，来源可追溯。">
+<style>
+  :root{
+    --bg:#F7F9FC; --ink:#000; --ink2:rgba(0,0,0,.62); --ink3:rgba(0,0,0,.40);
+    --accent:#4F46E5; --accent-soft:rgba(79,70,229,.10);
+    --line:rgba(0,0,0,.08); --card-border:rgba(255,255,255,.72);
+    --r-card:20px; --r-sub:16px; --r-btn:12px; --r-input:10px; --r-pill:6px;
+    --serif:'Noto Serif SC','Songti SC','SimSun',serif;
+    --mono:ui-monospace,'SFMono-Regular','Cascadia Code',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--serif); color:var(--ink); background:var(--bg);
+    letter-spacing:.02em; line-height:1.7; -webkit-font-smoothing:antialiased;
+    min-height:100vh; position:relative; overflow-x:hidden;
+  }
+  /* ── 三颗光斑：周期互质 4.4/4.8/3.6s，只动合成层 ── */
+  .aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .spot{position:absolute;border-radius:50%;will-change:transform}
+  .s1{width:95vw;height:95vw;left:-22vw;top:-10vw;background:radial-gradient(circle,rgba(96,165,250,.30) 0%,rgba(96,165,250,0) 68%);animation:d1 4.4s ease-in-out infinite alternate}
+  .s2{width:100vw;height:100vw;right:-18vw;bottom:-30vw;background:radial-gradient(circle,rgba(244,114,182,.26) 0%,rgba(244,114,182,0) 68%);animation:d2 4.8s ease-in-out infinite alternate}
+  .s3{width:80vw;height:80vw;left:16vw;top:-6vw;background:radial-gradient(circle,rgba(45,212,191,.22) 0%,rgba(45,212,191,0) 68%);animation:d3 3.6s ease-in-out infinite alternate}
+  @keyframes d1{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(4vw,-3vw,0) scale(1.25)}100%{transform:translate3d(-3vw,4vw,0) scale(1.08)}}
+  @keyframes d2{0%{transform:translate3d(0,0,0) scale(1.12)}50%{transform:translate3d(-5vw,3vw,0) scale(.88)}100%{transform:translate3d(3vw,-4vw,0) scale(1.28)}}
+  @keyframes d3{0%{transform:translate3d(0,0,0) scale(.95)}50%{transform:translate3d(4vw,3vw,0) scale(1.22)}100%{transform:translate3d(-4vw,-2vw,0) scale(1.05)}}
+
+  /* ── 玻璃体系：薄面 + 细边 + 折射暗示（CSS 近似） ── */
+  .glass{
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%);
+    border:1px solid var(--card-border); border-radius:var(--r-card);
+    box-shadow:0 4px 24px rgba(0,0,0,.04), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* 顶栏 */
+  header{position:sticky;top:0;z-index:50;background:rgba(247,249,252,.72);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(0,0,0,.05)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:16px;text-decoration:none;color:var(--ink)}
+  .brand svg{width:26px;height:26px}
+  .nav-links{display:flex;gap:26px;font-size:13px}
+  .nav-links a{color:var(--ink2);text-decoration:none;transition:color .2s}
+  .nav-links a:hover{color:var(--accent)}
+  .gh-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 15px;border-radius:var(--r-btn);background:var(--ink);color:#fff;font-size:13px;text-decoration:none;font-weight:600}
+  .gh-btn:hover{opacity:.85}
+  .gh-btn svg{width:16px;height:16px;fill:#fff}
+
+  /* Hero */
+  .hero{padding:88px 0 54px;text-align:center}
+  .kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.62);border:1px solid var(--card-border);font-size:12px;color:var(--ink2);margin-bottom:26px}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  h1{font-size:clamp(38px,7vw,64px);line-height:1.15;font-weight:700;letter-spacing:-.02em}
+  h1 .grad{background:linear-gradient(100deg,#4F46E5,#7C3AED 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin:22px auto 0;max-width:640px;font-size:16px;color:var(--ink2);line-height:1.9}
+  .sub b{color:var(--ink);font-weight:600}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+  .btn{padding:13px 24px;border-radius:var(--r-btn);font-size:14px;font-weight:600;text-decoration:none;transition:transform .2s,opacity .2s;display:inline-flex;align-items:center;gap:8px}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--ink);color:#fff}
+  .btn-ghost{background:rgba(255,255,255,.6);color:var(--ink);border:1px solid var(--card-border)}
+  .btn svg{width:16px;height:16px}
+
+  /* 数据条 */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 80px}
+  .stat{padding:22px 18px;text-align:center}
+  .stat .n{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em}
+  .stat .l{font-size:12px;color:var(--ink3);margin-top:4px}
+
+  /* 区块 */
+  section{margin-bottom:84px}
+  .sec-head{margin-bottom:28px}
+  .sec-no{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em}
+  h2{font-size:clamp(24px,4vw,34px);font-weight:700;letter-spacing:-.01em;margin-top:6px}
+  .sec-desc{color:var(--ink2);font-size:14px;margin-top:10px;max-width:660px}
+
+  /* 原则卡 */
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .principle{padding:24px;transition:transform .25s}
+  .principle:hover{transform:translateY(-3px)}
+  .pnum{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:600;margin-bottom:14px}
+  .principle h3{font-size:16px;font-weight:700;margin-bottom:8px}
+  .principle p{font-size:13px;color:var(--ink2);line-height:1.8}
+  .principle code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.05);padding:1px 6px;border-radius:4px}
+
+  /* 档位表 */
+  .tokens{padding:8px 26px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:14px 10px;border-bottom:1px solid rgba(0,0,0,.06)}
+  th{font-size:12px;color:var(--ink3);font-weight:500}
+  tr:last-child td{border-bottom:none}
+  td.k{font-family:var(--mono);color:var(--accent);font-size:13px}
+  td.v{font-family:var(--mono)}
+  td.u{color:var(--ink2)}
+
+  /* 分层栈 */
+  .stack{display:flex;flex-direction:column;gap:10px}
+  .layer{padding:18px 22px;display:flex;align-items:center;gap:18px;border-radius:var(--r-sub)}
+  .layer .idx{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);width:34px;flex-shrink:0}
+  .layer .t{font-weight:600;font-size:14px}
+  .layer .d{font-size:12px;color:var(--ink2);margin-top:2px}
+  .layer:nth-child(1){background:rgba(255,255,255,.35)}
+  .layer:nth-child(2){background:rgba(255,255,255,.48)}
+  .layer:nth-child(3){background:rgba(255,255,255,.62)}
+  .layer:nth-child(4){background:rgba(255,255,255,.78)}
+
+  /* 四实现 */
+  .grid2 .impl{padding:22px}
+  .impl .tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:var(--r-pill);background:var(--accent-soft);color:var(--accent);margin-bottom:11px}
+  .impl h3{font-size:15px;font-weight:700;margin-bottom:7px}
+  .impl p{font-size:13px;color:var(--ink2)}
+  .impl .when{margin-top:12px;font-size:12px;color:var(--ink3);border-top:1px solid rgba(0,0,0,.06);padding-top:10px}
+
+  /* 分册导航 */
+  .dirs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .dir{padding:20px;text-decoration:none;color:inherit;display:block;transition:transform .25s}
+  .dir:hover{transform:translateY(-3px)}
+  .dir .no{font-family:var(--mono);font-size:11px;color:var(--accent)}
+  .dir .name{font-weight:700;font-size:15px;margin:6px 0 5px;font-family:var(--mono)}
+  .dir .desc{font-size:12px;color:var(--ink2);line-height:1.6}
+
+  /* 铁律强调 */
+  .iron{padding:34px 38px;position:relative;overflow:hidden}
+  .iron::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(#4F46E5,#7C3AED)}
+  .iron .label{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.12em}
+  .iron blockquote{font-size:clamp(19px,3vw,26px);font-weight:700;line-height:1.55;margin:14px 0}
+  .iron p{font-size:13px;color:var(--ink2)}
+
+  footer{border-top:1px solid rgba(0,0,0,.06);padding:34px 0 48px;text-align:center;font-size:12px;color:var(--ink3)}
+  footer a{color:var(--accent);text-decoration:none}
+
+  @media(max-width:760px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .grid2,.dirs{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hero{padding:60px 0 40px}
+    section{margin-bottom:60px}
+    table{font-size:12px}
+    th,td{padding:11px 6px}
+  }
+  @media(prefers-reduced-motion:reduce){.spot{animation:none}*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true">
+  <div class="spot s1"></div><div class="spot s2"></div><div class="spot s3"></div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="3" y="3" width="26" height="26" rx="9" stroke="#4F46E5" stroke-width="1.6"/>
+        <path d="M8 19c3-6 7 3 10-3s5 2 6-1" stroke="#4F46E5" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="22" cy="10" r="1.6" fill="#4F46E5"/>
+      </svg>
+      <span>Liquid Design Knowledge</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#principles">原则</a><a href="#tokens">档位</a><a href="#glass">材质</a><a href="#dirs">分册</a>
+    </nav>
+    <a class="gh-btn" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.94.85.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<main id="top" class="wrap">
+
+  <div class="hero">
+    <div class="kicker"><span class="dot"></span>面向 AI · 来源可追溯 · 143 版实战沉淀</div>
+    <h1>Liquid Glass<br><span class="grad">设计语言知识库</span></h1>
+    <p class="sub">从「徒步小记」Android 原生版的 5000+ 行 UI 源码里，逐条挖出的液态玻璃视觉规范。<br>
+      每条数值都能追到具体源码文件——<b>让 AI 写界面时不靠记忆编造</b>。</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge#readme" target="_blank" rel="noopener">阅读知识库
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="#dirs">浏览分册</a>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat glass"><div class="n">143</div><div class="l">迭代版本</div></div>
+    <div class="stat glass"><div class="n">45</div><div class="l">知识库文件</div></div>
+    <div class="stat glass"><div class="n">6+9</div><div class="l">圆角 / 字号档位</div></div>
+    <div class="stat glass"><div class="n">4</div><div class="l">玻璃实现分层</div></div>
+  </div>
+
+  <section id="principles">
+    <div class="sec-head">
+      <div class="sec-no">01 — PRINCIPLES</div>
+      <h2>六条不可协商的原则</h2>
+      <p class="sec-desc">每一条都对应一次真实的返工。不是审美偏好，是拿"方块、闪退、不像一套东西"换出来的。</p>
+    </div>
+    <div class="grid2">
+      <div class="principle glass"><div class="pnum">1</div><h3>玻璃是地基，不许削弱换稳定</h3><p>出问题时改附加物（离屏层、阴影、裁剪、缩放链），绝不降低玻璃效果本身。用户原话："我的折射呢？？？？"</p></div>
+      <div class="principle glass"><div class="pnum">2</div><h3>文字只有黑白</h3><p>主文字纯黑/纯白，层次靠 <code>62%</code> / <code>40%</code> 透明度与字重。彩色只给背景、色带、图标，不给正文。</p></div>
+      <div class="principle glass"><div class="pnum">3</div><h3>尺寸只有档位</h3><p>圆角 6 档、字号 9 档、弹窗 3 档。新增组件只取值，不许现拍数字——防止"能跑但不像一套东西"。</p></div>
+      <div class="principle glass"><div class="pnum">4</div><h3>按钮全平面，液态集中在浮层</h3><p>普通按钮一张薄面 + 一条细边。液态质感只在底栏胶囊、顶栏、弹窗三处。</p></div>
+      <div class="principle glass"><div class="pnum">5</div><h3>会动的自己画</h3><p>会移动的玻璃走纯 Canvas 自绘、零离屏层；静止大浮层才用真 backdrop；一堆小按钮走平面。</p></div>
+      <div class="principle glass"><div class="pnum">6</div><h3>性能是生存项</h3><p>先算同屏层数再决定实现。同屏 10 个 shader 会崩——层数 × 重绘频率才是崩溃根源。</p></div>
+    </div>
+  </section>
+
+  <section id="tokens">
+    <div class="sec-head">
+      <div class="sec-no">02 — TOKENS</div>
+      <h2>档位速查</h2>
+      <p class="sec-desc">所有数值集中定义，新增组件只从这里取。完整机器可读版本在 <code>05-Design-Tokens/</code> 的四个 JSON 里。</p>
+    </div>
+    <div class="tokens glass">
+      <table>
+        <thead><tr><th>类别</th><th>档位值</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td class="k">圆角 (6)</td><td class="v">20 / 16 / 12 / 10 / 6 / 4</td><td class="u">卡片 · 子卡 · 按钮 · 输入框 · 徽章 · 细条</td></tr>
+          <tr><td class="k">字号 (9)</td><td class="v">22 / 19 / 16 / 15 / 14 / 13 / 12 / 11 / 10</td><td class="u">分享卡 · 标题 · 弹窗 · 正文 · 脚注（无半号）</td></tr>
+          <tr><td class="k">弹窗 (3)</td><td class="v">0.80 / 0.88 / 0.92</td><td class="u">确认 · 详情 · 表单，限高统一 0.80</td></tr>
+          <tr><td class="k">强调色</td><td class="v">#4F46E5 → #A5B4FC</td><td class="u">浅色 → 深色，随主题切换</td></tr>
+          <tr><td class="k">玻璃参数</td><td class="v">refract 10 · frost 0.62</td><td class="u">折射高度 · 白雾浓度（薄雾不白板）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="layers">
+    <div class="sec-head">
+      <div class="sec-no">03 — LAYERS</div>
+      <h2>视觉分层</h2>
+      <p class="sec-desc">层级不靠阴影 dp，靠玻璃材质与三层 backdrop 的关系。浮层必须是内容层的兄弟节点，不是子节点。</p>
+    </div>
+    <div class="stack">
+      <div class="layer glass"><div class="idx">01</div><div><div class="t">背景层 · Aurora 三光斑</div><div class="d">蓝 / 粉 / 青，周期 4.4 / 4.8 / 3.6 秒互质——只动合成层，零重绘</div></div></div>
+      <div class="layer glass"><div class="idx">02</div><div><div class="t">内容层 · 卡片与列表</div><div class="d">采样 bgBackdrop（纯背景），不采样内容——避免递归</div></div></div>
+      <div class="layer glass"><div class="idx">03</div><div><div class="t">浮层 · 顶栏 / 底栏 / 弹窗</div><div class="d">顶栏真模糊 + 羽化，底栏自绘玻璃 + 胶囊，弹窗真折射 + 二次导出 backdrop</div></div></div>
+      <div class="layer glass"><div class="idx">04</div><div><div class="t">反馈层 · Toast / 按压 / 震动</div><div class="d">Toast 用 Popup 保证盖在弹窗之上；点击异常统一兜底不杀进程</div></div></div>
+    </div>
+  </section>
+
+  <section id="glass">
+    <div class="sec-head">
+      <div class="sec-no">04 — MATERIALS</div>
+      <h2>四种玻璃实现</h2>
+      <p class="sec-desc">不是重复代码，是成本分层。选错实现就是崩溃和方块的开始。</p>
+    </div>
+    <div class="grid2">
+      <div class="impl glass"><span class="tag">真 backdrop</span><h3>liquidGlassSurface</h3><p>lens 真折射 + blur + 高光。参数 <code>refract</code> / <code>frost</code> / <code>veilAlpha</code> 控制厚度与通透。</p><div class="when">用于：弹窗、静止大浮层</div></div>
+      <div class="impl glass"><span class="tag">自绘 · 零离屏</span><h3>glassBar / glassPill</h3><p>纯 Canvas 画五层渐变。会动的东西绝不能用 Modifier.clip（矩形离屏层 → 方块）。</p><div class="when">用于：底栏玻璃条、选中胶囊</div></div>
+      <div class="impl glass"><span class="tag">平面自绘</span><h3>liquidGlassChip</h3><p>一张薄面 + 一条 1dp 细边。白膜按状态 0.06 / 0.10 / 0.16 / 0.20 分档。</p><div class="when">用于：所有按钮、一堆小件</div></div>
+      <div class="impl glass"><span class="tag">淡框</span><h3>glassPanel</h3><p>白 0.05 底 + 白 0.11 边 + 20dp 圆角。"若隐若现的框"，用于页面分组块。</p><div class="when">用于：卡片、分组容器</div></div>
+    </div>
+  </section>
+
+  <section id="dirs">
+    <div class="sec-head">
+      <div class="sec-no">05 — STRUCTURE</div>
+      <h2>九个分册</h2>
+      <p class="sec-desc">模仿 Android-MD3-Knowledge 的组织范式：AI 指令 + 权威来源层级 + 双向来源映射。</p>
+    </div>
+    <div class="dirs">
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/00-Metadata" target="_blank" rel="noopener"><div class="no">00</div><div class="name">Metadata</div><div class="desc">来源索引、术语、版本追踪、变更记录</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/01-Foundations" target="_blank" rel="noopener"><div class="no">01</div><div class="name">Foundations</div><div class="desc">原则、色彩、字体、形状、动效、层级</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/02-Glass-Materials" target="_blank" rel="noopener"><div class="no">02</div><div class="name">Glass Materials</div><div class="desc">四实现、核心参数、降级、背景流光</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/03-Components" target="_blank" rel="noopener"><div class="no">03</div><div class="name">Components</div><div class="desc">按钮、弹窗、顶栏、底栏、Toast、卡片</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/04-Interaction" target="_blank" rel="noopener"><div class="no">04</div><div class="name">Interaction</div><div class="desc">按压、底栏形变、安全点击、震动</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/05-Design-Tokens" target="_blank" rel="noopener"><div class="no">05</div><div class="name">Design Tokens</div><div class="desc">4 个 JSON，机器可读的颜色/形状/字号/玻璃值</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/06-Compose-Implementation" target="_blank" rel="noopener"><div class="no">06</div><div class="name">Compose Impl</div><div class="desc">API 映射表、性能红线</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/07-Development-Rules" target="_blank" rel="noopener"><div class="no">07</div><div class="name">Dev Rules</div><div class="desc">12 条铁律、评审清单、视觉 bug 十问</div></a>
+      <a class="dir glass" href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge/tree/main/08-Source-Map" target="_blank" rel="noopener"><div class="no">08</div><div class="name">Source Map</div><div class="desc">知识点与源码文件的双向映射表</div></a>
+    </div>
+  </section>
+
+  <section>
+    <div class="iron glass">
+      <div class="label">THE IRON RULE · 最高铁律</div>
+      <blockquote>液态玻璃不许瞎改，也不许删掉。</blockquote>
+      <p>这条是拿四轮返工换来的。修 bug 的正确顺序永远是：保住玻璃本身 → 查附加物 → 只改那个出问题的附加物。任何"把折射删了换稳定"的方案都是错的。</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    个人整理知识库，从单一生产项目沉淀 · 不是 Google 官方规范 · MIT 许可<br>
+    <a href="https://github.com/NiUKinGDoM/Liquid-Design-Knowledge" target="_blank" rel="noopener">NiUKinGDoM/Liquid-Design-Knowledge</a>
+  </div>
+</footer>
+
+</body>
+</html>

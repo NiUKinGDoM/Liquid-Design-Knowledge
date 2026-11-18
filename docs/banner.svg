@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400" role="img" aria-label="Liquid Design Knowledge 设计语言知识库">
+  <defs>
+    <radialGradient id="b" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.34"/>
+      <stop offset="68%" stop-color="#60A5FA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="p" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F472B6" stop-opacity="0.30"/>
+      <stop offset="68%" stop-color="#F472B6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="t" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.26"/>
+      <stop offset="68%" stop-color="#2DD4BF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="72%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="hi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1200" height="400" fill="#F7F9FC"/>
+
+  <!-- Aurora 三光斑（互质周期在落地页 HTML 里，此处静态呈现） -->
+  <circle cx="120" cy="20" r="360" fill="url(#b)"/>
+  <circle cx="1120" cy="400" r="380" fill="url(#p)"/>
+  <circle cx="640" cy="-40" r="300" fill="url(#t)"/>
+
+  <!-- 玻璃卡：薄面 + 细边 + 顶部高光 -->
+  <rect x="230" y="52" width="740" height="296" rx="20" fill="#FFFFFF" fill-opacity="0.55" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.5"/>
+  <rect x="231.5" y="53.5" width="737" height="60" rx="20" fill="url(#hi)" opacity="0.5"/>
+
+  <!-- 徽章 -->
+  <rect x="470" y="86" width="260" height="30" rx="15" fill="#FFFFFF" fill-opacity="0.72" stroke="#FFFFFF" stroke-opacity="0.9"/>
+  <circle cx="492" cy="101" r="4" fill="#4F46E5"/>
+  <text x="506" y="106" font-family="'Noto Serif SC','Songti SC','SimSun',serif" font-size="13" fill="#000" fill-opacity="0.68" letter-spacing="1">面向 AI · 来源可追溯 · 143 版沉淀</text>
+
+  <!-- 标题 -->
+  <text x="600" y="190" text-anchor="middle" font-family="'Noto Serif SC','Songti SC','SimSun',serif" font-size="58" font-weight="700" fill="#000" letter-spacing="-1">Liquid Glass</text>
+  <text x="600" y="252" text-anchor="middle" font-family="'Noto Serif SC','Songti SC','SimSun',serif" font-size="42" font-weight="700" fill="url(#g)" letter-spacing="2">设计语言知识库</text>
+
+  <!-- 副标题 -->
+  <text x="600" y="298" text-anchor="middle" font-family="'Noto Serif SC','Songti SC','SimSun',serif" font-size="15" fill="#000" fill-opacity="0.62">从徒步小记原生版 5000+ 行 UI 源码逐条挖出的液态玻璃视觉规范</text>
+  <text x="600" y="322" text-anchor="middle" font-family="'Noto Serif SC','Songti SC','SimSun',serif" font-size="15" fill="#000" fill-opacity="0.62">每条数值都能追到具体源码文件 — 让 AI 写界面时不靠记忆编造</text>
+</svg>
